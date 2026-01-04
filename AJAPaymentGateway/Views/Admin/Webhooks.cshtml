@@ -1,0 +1,28 @@
+﻿@model List<WebhookLog>
+@{
+    Layout = "_Layout";
+}
+
+<h3>Webhook Logs</h3>
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>Payment ID</th>
+            <th>URL</th>
+            <th>Status</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            <tr>
+                <td>@log.PaymentId</td>
+                <td>@log.Url</td>
+                <td>@log.ResponseCode</td>
+                <td>@log.CreatedAt</td>
+            </tr>
+        }
+    </tbody>
+</table>

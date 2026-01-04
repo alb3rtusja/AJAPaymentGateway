@@ -1,0 +1,39 @@
+﻿@model List<Payment>
+@{
+    Layout = "_Layout";
+}
+
+<h3>Payments</h3>
+
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Payment ID</th>
+            <th>Order ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.PaymentId</td>
+                <td>@p.OrderId</td>
+                <td>Rp @p.Amount</td>
+                <td>
+                    <span class="badge bg-secondary">@p.Status</span>
+                </td>
+                <td>@p.CreatedAt</td>
+                <td>
+                    <a class="btn btn-sm btn-outline-primary"
+                       href="/Admin/PaymentDetail/@p.PaymentId">
+                        Detail
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -24,6 +24,12 @@ namespace AJAPaymentGateway.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(CreatePaymentResponse), 201)]
+        [Consumes("application/json")]
+        [Produces("application/json")]
         public IActionResult CreatePayment([FromBody] CreatePaymentRequest request)
         {
             if (!ModelState.IsValid)

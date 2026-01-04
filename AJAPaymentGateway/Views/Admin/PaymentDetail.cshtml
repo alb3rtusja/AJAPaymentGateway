@@ -1,0 +1,15 @@
+﻿@model Payment
+@{
+    Layout = "_Layout";
+}
+
+<h3>Payment Detail</h3>
+
+<table class="table">
+    <tr><th>Payment ID</th><td>@Model.PaymentId</td></tr>
+    <tr><th>Order ID</th><td>@Model.OrderId</td></tr>
+    <tr><th>Amount</th><td>@Model.Amount</td></tr>
+    <tr><th>Status</th><td>@Model.Status</td></tr>
+    <tr><th>Callback URL</th><td>@Model.CallbackUrl</td></tr>
+    <tr><th>Created At</th><td>@Model.CreatedAt</td></tr>
+</table>

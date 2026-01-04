@@ -1,9 +1,11 @@
-﻿using AJAPaymentGateway.Models;
+﻿using AJAPaymentGateway.DTOs;
+using AJAPaymentGateway.Models;
 using AJAPaymentGateway.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AJAPaymentGateway.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("Checkout")]
     public class CheckoutController : Controller
     {
