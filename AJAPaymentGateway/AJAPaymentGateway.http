@@ -1,0 +1,6 @@
+@AJAPaymentGateway_HostAddress = http://localhost:5111
+
+GET {{AJAPaymentGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

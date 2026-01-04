@@ -1,0 +1,30 @@
+﻿@model AJAPaymentGateway.Models.Payment
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mock Payment Checkout</title>
+</head>
+<body>
+    <h2>Mock Payment Gateway</h2>
+
+    <p><b>Order ID:</b> @Model.OrderId</p>
+    <p><b>Amount:</b> Rp @Model.Amount</p>
+    <p><b>Status:</b> @Model.Status</p>
+
+    @if (Model.Status == "pending")
+    {
+        <form method="post" action="/checkout/@Model.PaymentId/pay">
+            <button type="submit">Pay</button>
+        </form>
+
+        <form method="post" action="/checkout/@Model.PaymentId/fail">
+            <button type="submit">Fail</button>
+        </form>
+    }
+    else
+    {
+        <p><b>Payment finished.</b></p>
+    }
+</body>
+</html>
