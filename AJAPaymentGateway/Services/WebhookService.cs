@@ -51,17 +51,50 @@ namespace AJAPaymentGateway.Services
                 statusCode = 0; // network error
             }
 
+            var success = statusCode >= 200 && statusCode < 300;
+
             _db.WebhookLogs.Add(new WebhookLog
             {
                 PaymentId = payment.PaymentId,
                 Url = payment.CallbackUrl,
                 Payload = payload,
                 ResponseCode = statusCode,
+                IsSuccess = success,
+                RetryCount = 0,
                 CreatedAt = DateTime.UtcNow
             });
 
             await _db.SaveChangesAsync();
         }
+
+        public async Task RetryAsync(WebhookLog log)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, log.Url);
+            request.Content = new StringContent(log.Payload, Encoding.UTF8, "application/json");
+
+            int statusCode;
+
+            try
+            {
+                var response = await _http.SendAsync(request);
+                statusCode = (int)response.StatusCode;
+                log.IsSuccess = response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                statusCode = 0;
+                log.IsSuccess = false;
+            }
+
+            log.ResponseCode = statusCode;
+            log.RetryCount++;
+            log.LastRetryAt = DateTime.UtcNow;
+        }
+
+
+
+
+
 
     }
 }

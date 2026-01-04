@@ -1,3 +1,4 @@
+using AJAPaymentGateway.BackgroundServices;
 using AJAPaymentGateway.Core.Payments;
 using AJAPaymentGateway.Data;
 using AJAPaymentGateway.Services;
@@ -14,6 +15,7 @@ builder.Services.AddHttpClient<WebhookService>();
 builder.Services.AddScoped<SandboxPaymentProcessor>();
 builder.Services.AddScoped<ProductionPaymentProcessor>();
 builder.Services.AddScoped<PaymentProcessorFactory>();
+builder.Services.AddHostedService<WebhookRetryService>();
 
 builder.Services.AddRazorPages();
 
