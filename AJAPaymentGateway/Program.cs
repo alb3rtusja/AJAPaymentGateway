@@ -16,6 +16,35 @@ builder.Services.AddScoped<SandboxPaymentProcessor>();
 builder.Services.AddScoped<ProductionPaymentProcessor>();
 builder.Services.AddScoped<PaymentProcessorFactory>();
 builder.Services.AddHostedService<WebhookRetryService>();
+builder.Services.AddScoped<IdempotencyService>();
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Idempotency-Key", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Idempotency-Key",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Idempotency Key for safe retry"
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Idempotency-Key"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+
 
 builder.Services.AddRazorPages();
 

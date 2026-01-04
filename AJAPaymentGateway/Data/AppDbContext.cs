@@ -12,6 +12,8 @@ namespace AJAPaymentGateway.Data
 
         public DbSet<Payment> Payments => Set<Payment>();
         public DbSet<WebhookLog> WebhookLogs => Set<WebhookLog>();
+        public DbSet<IdempotencyRecord> IdempotencyRecords => Set<IdempotencyRecord>();
+
 
 
     }
