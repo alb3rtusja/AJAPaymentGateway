@@ -27,7 +27,7 @@ namespace AJAPaymentGateway.BackgroundServices
         {
             using var scope = _provider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            var webhookService = scope.ServiceProvider.GetRequiredService<WebhookService>();
+            var webhookService = scope.ServiceProvider.GetRequiredService<IWebhookService>();
 
             var failedWebhooks = await db.WebhookLogs
                 .Where(x =>

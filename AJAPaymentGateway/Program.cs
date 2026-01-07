@@ -12,12 +12,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<PaymentService>();
-builder.Services.AddHttpClient<WebhookService>();
+builder.Services.AddHttpClient<IWebhookService, WebhookService>();
 builder.Services.AddScoped<SandboxPaymentProcessor>();
 builder.Services.AddScoped<ProductionPaymentProcessor>();
-builder.Services.AddScoped<PaymentProcessorFactory>();
+builder.Services.AddScoped<IPaymentProcessorFactory, PaymentProcessorFactory>();
 builder.Services.AddHostedService<WebhookRetryService>();
 builder.Services.AddScoped<IdempotencyService>();
+builder.Services.AddHostedService<WebhookDispatcherService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -83,9 +84,16 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/admin/dashboard");
+    return Task.CompletedTask;
+});
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Admin}/{action=Dashboard}/{id?}");
+    pattern: "{controller}/{action}/{id?}");
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

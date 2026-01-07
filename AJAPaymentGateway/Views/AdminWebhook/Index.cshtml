@@ -1,0 +1,82 @@
+﻿@model List<WebhookOutboxViewModel>
+
+@{
+    ViewData["Title"] = "Webhook Outbox";
+    Layout = "_Layout";
+    var canRetryAny = Model.Any(x => !x.IsSent && x.RetryCount < 5);
+}
+
+<h2 class="mb-3">Webhook Outbox</h2>
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+
+<form method="post" asp-action="RetryAll" class="mb-3">
+    <button class="btn btn-warning"
+    @(canRetryAny ? "" : "disabled")>
+        Retry All Pending
+    </button>
+</form>
+
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>PaymentId</th>
+            <th>Target URL</th>
+            <th>Status</th>
+            <th>Retry</th>
+            <th>Last Attempt</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PaymentId</td>
+                <td style="max-width:200px; word-break:break-all">
+                    @item.TargetUrl
+                </td>
+                <td>
+                    @if (item.IsSent)
+                    {
+                        <span class="badge bg-success">SENT</span>
+                    }
+                    else if (item.RetryCount >= 5)
+                    {
+                        <span class="badge bg-danger">DEAD</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">PENDING</span>
+                    }
+                </td>
+
+                <td>@item.RetryCount</td>
+                <td>@item.LastAttemptAt?.ToLocalTime()</td>
+                <td>
+                    @if (!item.IsSent && item.RetryCount < 5)
+                    {
+                        <form method="post"
+                              asp-action="Retry"
+                              asp-route-id="@item.Id">
+                            <button class="btn btn-sm btn-primary">
+                                Retry
+                            </button>
+                        </form>
+                    }
+                    else if (!item.IsSent && item.RetryCount >= 5)
+                    {
+                        <span class="badge bg-danger">
+                            MAX RETRY
+                        </span>
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

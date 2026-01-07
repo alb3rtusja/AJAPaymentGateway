@@ -1,10 +1,10 @@
 ﻿using AJAPaymentGateway.Data;
 using AJAPaymentGateway.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using AJAPaymentGateway.Models;
 
 namespace AJAPaymentGateway.Controllers
 {
+    [Route("admin")]
     public class AdminController : Controller
     {
         private readonly AppDbContext _db;
@@ -14,6 +14,7 @@ namespace AJAPaymentGateway.Controllers
             _db = db;
         }
 
+        [HttpGet("dashboard")]
         public IActionResult Dashboard()
         {
             var model = new DashboardViewModel
@@ -27,6 +28,7 @@ namespace AJAPaymentGateway.Controllers
             return View(model);
         }
 
+        [HttpGet("payments")]
         public IActionResult Payments()
         {
             var payments = _db.Payments
@@ -36,26 +38,14 @@ namespace AJAPaymentGateway.Controllers
             return View(payments);
         }
 
+        [HttpGet("PaymentDetail/{id}")]
         public IActionResult PaymentDetail(string id)
         {
             var payment = _db.Payments.FirstOrDefault(p => p.PaymentId == id);
-            if (payment == null) return NotFound();
+            if (payment == null)
+                return NotFound();
 
             return View(payment);
         }
-
-        public IActionResult Webhooks()
-        {
-            var logs = _db.WebhookLogs
-                .OrderByDescending(w => w.CreatedAt)
-                .Take(100)
-                .ToList();
-
-            return View(logs);
-        }
-
-
-
-
     }
 }

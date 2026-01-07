@@ -1,18 +1,21 @@
 ﻿using AJAPaymentGateway.Core.Payments;
 using AJAPaymentGateway.Data;
+using AJAPaymentGateway.DTOs;
 using AJAPaymentGateway.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace AJAPaymentGateway.Services
 {
     public class PaymentService
     {
         private readonly AppDbContext _db;
-        private readonly WebhookService _webhookService;
-        private readonly PaymentProcessorFactory _processorFactory;
+        private readonly IWebhookService _webhookService;
+        private readonly IPaymentProcessorFactory _processorFactory;
 
         public PaymentService(AppDbContext db
-            , WebhookService webhookService
-            , PaymentProcessorFactory processorFactory)
+            , IWebhookService webhookService
+            , IPaymentProcessorFactory processorFactory)
         {
             _db = db;
             _webhookService = webhookService;
@@ -25,6 +28,12 @@ namespace AJAPaymentGateway.Services
             string customerName,
             string callbackUrl)
         {
+            var exists =  _db.Payments.Any(p => p.OrderId == orderId);
+
+            if (exists)
+                throw new InvalidOperationException(
+                    $"Payment with OrderId {orderId} already exists");
+
             var payment = new Payment
             {
                 PaymentId = "pay_" + Guid.NewGuid().ToString("N")[..10],
@@ -37,6 +46,16 @@ namespace AJAPaymentGateway.Services
             };
 
             _db.Payments.Add(payment);
+
+            var outbox = new WebhookOutbox
+            {
+                PaymentId = payment.PaymentId,
+                TargetUrl = payment.CallbackUrl,
+                Payload = JsonSerializer.Serialize(payment)
+            };
+
+            _db.WebhookOutbox.Add(outbox);
+
             _db.SaveChanges();
 
             return payment;
@@ -65,6 +84,41 @@ namespace AJAPaymentGateway.Services
             return true;
         }
 
+        public async Task<Payment> CreateAsync(CreatePaymentRequest paymentRequest)
+        {
+            var exists = await _db.Payments
+                .AnyAsync(p => p.OrderId == paymentRequest.OrderId);
+
+            if (exists)
+                throw new InvalidOperationException(
+                    $"Payment with OrderId {paymentRequest.OrderId} already exists");
+
+            var payment = new Payment
+            {
+                PaymentId = "pay_" + Guid.NewGuid().ToString("N")[..10],
+                OrderId = paymentRequest.OrderId,
+                Amount = paymentRequest.Amount,
+                CustomerName = paymentRequest.CustomerName,
+                CallbackUrl = paymentRequest.CallbackUrl,
+                Status = "pending",
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _db.Payments.Add(payment);
+
+            var outbox = new WebhookOutbox
+            {
+                PaymentId = payment.PaymentId,
+                TargetUrl = payment.CallbackUrl,
+                Payload = JsonSerializer.Serialize(payment)
+            };
+
+            _db.WebhookOutbox.Add(outbox);
+
+            await _db.SaveChangesAsync();
+
+            return payment;
+        }
 
 
 

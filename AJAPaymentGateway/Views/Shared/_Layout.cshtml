@@ -9,22 +9,46 @@
 <body class="bg-light">
 
     <nav class="navbar navbar-dark bg-dark px-3">
-        <span class="navbar-brand">AJA Payment Gateway</span>
+        <span class="navbar-brand fw-semibold">AJA Payment Gateway</span>
     </nav>
 
     <div class="container-fluid">
         <div class="row">
             <aside class="col-md-2 bg-white border-end vh-100 p-3">
-                <ul class="nav flex-column">
+                <ul class="nav flex-column gap-1">
+
                     <li class="nav-item">
-                        <a class="nav-link" href="/Admin/Dashboard">Dashboard</a>
+                        <a class="nav-link" href="/admin/dashboard">
+                            📊 Dashboard
+                        </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="/Admin/Payments">Payments</a>
+                        <a class="nav-link" href="/admin/payments">
+                            💳 Payments
+                        </a>
                     </li>
+
+                    <hr />
+
                     <li class="nav-item">
-                        <a class="nav-link" href="/Admin/Webhooks">Webhook Logs</a>
+                        <span class="text-muted small px-2">
+                            Webhooks
+                        </span>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/webhook-logs">
+                            📜 Webhook Logs
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/webhook-outbox">
+                            📦 Webhook Outbox
+                        </a>
+                    </li>
+
                 </ul>
             </aside>
 

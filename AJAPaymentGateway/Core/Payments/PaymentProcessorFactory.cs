@@ -1,6 +1,11 @@
 ﻿namespace AJAPaymentGateway.Core.Payments
 {
-    public class PaymentProcessorFactory
+    public interface IPaymentProcessorFactory
+    {
+        IPaymentProcessor Create();
+    }
+
+    public class PaymentProcessorFactory : IPaymentProcessorFactory
     {
         private readonly IConfiguration _config;
         private readonly IServiceProvider _provider;

@@ -6,7 +6,14 @@ using AJAPaymentGateway.Helpers;
 
 namespace AJAPaymentGateway.Services
 {
-    public class WebhookService
+    public interface IWebhookService
+    {
+        Task SendAsync(Payment payment);
+        Task RetryAsync(WebhookLog log);
+        Task SendRawAsync(string url, string payload);
+    }
+
+    public class WebhookService : IWebhookService
     {
         private readonly HttpClient _http;
         private readonly AppDbContext _db;
@@ -91,7 +98,16 @@ namespace AJAPaymentGateway.Services
             log.LastRetryAt = DateTime.UtcNow;
         }
 
+        public async Task SendRawAsync(string url, string payload)
+        {
+            var content = new StringContent(
+                payload,
+                Encoding.UTF8,
+                "application/json");
 
+            var response = await _http.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+        }
 
 
 
